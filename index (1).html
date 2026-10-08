@@ -1,0 +1,259 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AshrayaCSR - Complete Product Ecosystem</title>
+    <!-- Leaflet.js Maps CSS -->
+    <link rel="stylesheet" href="https://unpkg.com" />
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f1f5f9; display: flex; flex-direction: column; height: 100vh; }
+        header { background-color: #1e3a8a; color: white; padding: 12px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        header h1 { margin: 0; font-size: 22px; }
+        header p { margin: 4px 0 0 0; font-size: 13px; color: #93c5fd; }
+        
+        /* Navigation Tabs for Presentation */
+        .nav-tabs { display: flex; justify-content: center; background-color: #0f172a; padding: 10px; gap: 15px; }
+        .tab-btn { padding: 10px 20px; background-color: #334155; color: #cbd5e1; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: all 0.2s; font-size: 14px; }
+        .tab-btn:hover { background-color: #475569; color: white; }
+        .tab-btn.active { background-color: #2563eb; color: white; box-shadow: 0 0 10px rgba(37, 99, 235, 0.5); }
+
+        .app-content { flex: 1; display: none; height: calc(100vh - 125px); }
+        .app-content.active-view { display: flex; }
+
+        /* Screen 1: Citizen View Styles */
+        .citizen-container { max-width: 500px; background: white; margin: 30px auto; padding: 25px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); display: flex; flex-direction: column; gap: 15px; height: fit-content; width: 90%; }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        label { font-size: 14px; color: #475569; font-weight: 600; }
+        input, textarea, select { padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
+        textarea { resize: none; height: 90px; }
+        .btn-submit { padding: 14px; background-color: #2563eb; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .btn-submit:hover { background-color: #1d4ed8; }
+        .status-alert { padding: 12px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 13px; background-color: #f8fafc; border: 1px dashed #cbd5e1; color: #64748b; }
+        .success-flash { background-color: #d1fae5; color: #065f46; border-color: #34d399; }
+
+        /* Screen 2 & 3: NGO & CSR Split View Styles */
+        .sidebar { width: 400px; background: white; padding: 20px; box-shadow: 4px 0 10px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 15px; overflow-y: auto; box-sizing: border-box; }
+        .map-area { flex: 1; height: 100%; }
+        .case-card { border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; background-color: #f8fafc; display: flex; flex-direction: column; gap: 8px; }
+        .case-title { font-weight: bold; color: #1e3a8a; display: flex; justify-content: space-between; }
+        .badge { font-size: 11px; padding: 3px 6px; border-radius: 4px; font-weight: bold; width: fit-content; }
+        .badge-red { background-color: #fee2e2; color: #991b1b; }
+        .badge-green { background-color: #d1fae5; color: #065f46; }
+        .badge-orange { background-color: #ffedd5; color: #9a3412; }
+        .btn-action { padding: 8px 12px; background-color: #10b981; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; text-align: center; }
+        .btn-action:hover { background-color: #059669; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🤝 Project AshrayaCSR</h1>
+        <p>Developed by Prashant Yadav & Harshit | IT Branch, Government Polytechnic Lucknow</p>
+    </header>
+
+    <!-- Navigation Tabs for Presentation Demo -->
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchView('citizenView', this)">📱 1. सिटिजन रिपोर्टर ऐप</button>
+        <button class="tab-btn" onclick="switchView('ngoView', this)">🏢 2. एनजीओ लाइव डैशबोर्ड</button>
+        <button class="tab-btn" onclick="switchView('csrView', this)">💼 3. कॉर्पोरेट CSR ग्रिड</button>
+    </div>
+
+    <!-- VIEW 1: Citizen Reporter App -->
+    <div id="citizenView" class="app-content active-view">
+        <div class="citizen-container">
+            <h3 style="margin:0; color:#1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom:10px;">📸 Report Destitute on Footpath</h3>
+            <div class="form-group">
+                <label>लाचार परिवार/बुजुर्ग की स्थिति का विवरण</label>
+                <textarea id="familyDetails" placeholder="उदा: बीमार बुजुर्ग व्यक्ति परिवार के साथ मुंशीपुलिया चौराहे के पास फुटपाथ पर अत्यधिक दयनीय स्थिति में हैं..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>नज़दीकी लैंडमार्क / पता</label>
+                <input type="text" id="landmarkInput" placeholder="उदा: मुंशीपुलिया मेट्रो पिलर नंबर 12 के पास, लखनऊ">
+            </div>
+            <div class="form-group">
+                <label>आपातकाल का स्तर (Urgency)</label>
+                <select id="urgencyLevel">
+                    <option value="Critical">🔴 Critical (तुरंत चिकित्सा सहायता आवश्यक)</option>
+                    <option value="Immediate">🟡 Immediate (आश्रय और भोजन आवश्यक)</option>
+                </select>
+            </div>
+            <div id="submitStatus" class="status-alert">GPS: Ready to capture coordinates automatically</div>
+            <button class="btn-submit" onclick="simulateCitizenSubmit()">🚀 Send Live Alert to Local Grid</button>
+        </div>
+    </div>
+
+    <!-- VIEW 2: NGO Live Dashboard -->
+    <div id="ngoView" class="app-content">
+        <div class="sidebar">
+            <h3 style="margin:0; color:#1e293b; border-bottom:2px solid #e2e8f0; padding-bottom:10px;">📋 Live Alert Panel</h3>
+            <div id="ngoCaseList" style="display:flex; flex-direction:column; gap:15px;">
+                <!-- Cases dynamically updated here -->
+            </div>
+        </div>
+        <div id="ngoMap" class="map-area"></div>
+    </div>
+
+    <!-- VIEW 3: Corporate CSR Grid -->
+    <div id="csrView" class="app-content">
+        <div class="sidebar">
+            <h3 style="margin:0; color:#1e293b; border-bottom:2px solid #e2e8f0; padding-bottom:10px;">💼 CSR Corporate Funding</h3>
+            <p style="font-size:13px; color:#64748b; margin:0;">Section 135 Companies Act Compliance Grid</p>
+            <div id="csrCaseList" style="display:flex; flex-direction:column; gap:15px;">
+                <!-- CSR Cases dynamically updated here -->
+            </div>
+        </div>
+        <div id="csrMap" class="map-area"></div>
+    </div>
+
+    <!-- Leaflet JS Map Engine -->
+    <script src="https://unpkg.com"></script>
+    <script>
+        // Central Shared Application Data State (Mock Database Layer)
+        let globalCases = [
+            {
+                id: "CASE_LKO_01",
+                description: "Elderly man unable to walk, lying under the bridge in unhygienic state.",
+                landmark: "Polytechnic Chauraha Flyover, Lucknow",
+                urgency: "Critical",
+                lat: 26.8726, lng: 80.9856,
+                status: "Pending Rescue",
+                fundingRequired: "₹15,000 / month",
+                sponsoredBy: "None"
+            },
+            {
+                id: "CASE_LKO_02",
+                description: "Mother with a 4-year-old child shivering in cold on the pavement.",
+                landmark: "Near Hazratganj Multilevel Parking, Lucknow",
+                urgency: "Immediate",
+                lat: 26.8504, lng: 80.9404,
+                status: "Rescued & Sheltered",
+                fundingRequired: "Fully Sponsored",
+                sponsoredBy: "Tata Group CSR"
+            }
+        ];
+
+        let ngoMapObj, csrMapObj;
+        let ngoMarkers = {}, csrMarkers = {};
+
+        // Tab Switching Engine for 0 to 100% presentation flow
+        function switchView(viewId, btnElement) {
+            document.querySelectorAll('.app-content').forEach(view => view.classList.remove('active-view'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(viewId).classList.add('active-view');
+            btnElement.classList.add('active');
+
+            // Initialize or invalidate maps to fix render issues on hidden containers
+            if (viewId === 'ngoView') {
+                if (!ngoMapObj) initNgoMap();
+                else ngoMapObj.invalidateSize();
+                renderNgoPanel();
+            } else if (viewId === 'csrView') {
+                if (!csrMapObj) initCsrMap();
+                else csrMapObj.invalidateSize();
+                renderCsrPanel();
+            }
+        }
+
+        // View 1 Logic: Simulate Citizen Data Entry
+        function simulateCitizenSubmit() {
+            const desc = document.getElementById('familyDetails').value;
+            const land = document.getElementById('landmarkInput').value;
+            const urg = document.getElementById('urgencyLevel').value;
+            const statusBox = document.getElementById('submitStatus');
+
+            if (!desc || !land) {
+                alert("कृपया विवरण और लैंडमार्क भरें!");
+                return;
+            }
+
+            // Create a temporary mock data structure entry
+            const newCase = {
+                id: "CASE_LKO_" + (globalCases.length + 1),
+                description: desc,
+                landmark: land,
+                urgency: urg,
+                lat: 26.8864 + (Math.random() - 0.5) * 0.02, // Randomly drops near Munshipulia area
+                lng: 80.9642 + (Math.random() - 0.5) * 0.02,
+                status: "Pending Rescue",
+                fundingRequired: "₹12,000 / month",
+sponsoredBy: "None"
+};
+globalCases.unshift(newCase); // Push to top of runtime data array
+statusBox.innerText = "🎉 Alert Dispatched Successfully to Grid!";
+statusBox.className = "status-alert success-flash";
+document.getElementById('familyDetails').value = "";
+document.getElementById('landmarkInput').value = "";
+setTimeout(() => {
+statusBox.innerText = "GPS: Ready to capture coordinates automatically";
+statusBox.className = "status-alert";
+}, 3000);
+}
+// View 2 Logic: NGO System Setup
+function initNgoMap() {
+ngoMapObj = L.map('ngoMap').setView([26.8864, 80.9642], 13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(ngoMapObj);
+}
+function renderNgoPanel() {
+const listContainer = document.getElementById('ngoCaseList');
+listContainer.innerHTML = "";
+// Clear old map markers
+Object.values(ngoMarkers).forEach(m => ngoMapObj.removeLayer(m));
+ngoMarkers = {};
+globalCases.forEach(c => {
+// Plot Map Marker
+const markerColor = c.status === "Pending Rescue" ? "red" : "green";
+const marker = L.marker([c.lat, c.lng]).addTo(ngoMapObj)
+.bindPopup(<b>📍 Location:</b> ${c.landmark}<br><b>Status:</b> ${c.status});
+ngoMarkers[c.id] = marker;
+// Render Sidebar Card
+const card = document.createElement('div');
+card.className = "case-card";
+card.innerHTML = <div class="case-title"> <span>Case #${c.id}</span> <span class="badge ${c.status === 'Pending Rescue' ? 'badge-red' : 'badge-green'}">${c.status}</span> </div> <div style="font-size:13px; color:#475569;"><b>Desc:</b> ${c.description}</div> <div style="font-size:12px; color:#64748b;"><b>Landmark:</b> ${c.landmark}</div> ${c.status === 'Pending Rescue' ?🚒 Dispatch Rescue Team:✅ Shifting Completed} ;
+listContainer.appendChild(card);
+});
+}
+function triggerRescue(caseId) {
+const target = globalCases.find(c => c.id === caseId);
+if (target) {
+target.status = "Rescued & Sheltered";
+renderNgoPanel();
+ngoMarkers[caseId].openPopup();
+}
+}
+// View 3 Logic: Corporate CSR Funding Setup
+function initCsrMap() {
+csrMapObj = L.map('csrMap').setView([26.8864, 80.9642], 13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(csrMapObj);
+}
+function renderCsrPanel() {
+const listContainer = document.getElementById('csrCaseList');
+listContainer.innerHTML = "";
+Object.values(csrMarkers).forEach(m => csrMapObj.removeLayer(m));
+csrMarkers = {};
+globalCases.forEach(c => {
+// Plot Csr Map Marker
+const marker = L.marker([c.lat, c.lng]).addTo(csrMapObj)
+.bindPopup(<b>Sponsor:</b> ${c.sponsoredBy});
+csrMarkers[c.id] = marker;
+// Render Sidebar Card
+const card = document.createElement('div');
+card.className = "case-card";
+card.innerHTML = <div class="case-title"> <span>Case #${c.id}</span> <span class="badge ${c.sponsoredBy === 'None' ? 'badge-orange' : 'badge-green'}"> ${c.sponsoredBy === 'None' ? 'Awaiting Funds' : 'Sponsored'} </span> </div> <div style="font-size:13px; color:#475569;"><b>Rescue Location:</b> ${c.landmark}</div> <div style="font-size:13px; color:#1e293b;"><b>Rehab Cost:</b> <b>${c.fundingRequired}</b></div> ${c.sponsoredBy === 'None' ?
+💰 Sponsor via CSR Fund
+:
+Sponsor: ${c.sponsoredBy} ✅
+} ;
+listContainer.appendChild(card);
+});
+}
+function triggerCsrFunding(caseId) {
+const target = globalCases.find(c => c.id === caseId);
+if (target) {
+target.sponsoredBy = "Polytchnic Lko IT CSR Care";
+target.fundingRequired = "Fully Sponsored";
+renderCsrPanel();
+csrMarkers[caseId].openPopup();
+}
+}
